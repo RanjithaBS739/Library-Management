@@ -1,9 +1,11 @@
+require("dotenv").config();
+
 const express = require("express");
 const mysql = require("mysql2");
 
 const app = express();
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Allow JSON data
 app.use(express.json());
@@ -13,10 +15,11 @@ app.use(express.static("public"));
 
 // MySQL connection
 const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "Library@123",
-    database: "library_db"
+    host: process.env.MYSQLHOST,
+    user: process.env.MYSQLUSER,
+    password: process.env.MYSQLPASSWORD,
+    database: process.env.MYSQLDATABASE,
+    port: process.env.MYSQLPORT
 });
 
 // Test MySQL connection
@@ -37,6 +40,7 @@ app.get("/books", (req, res) => {
 
         if (err) {
             console.log(err);
+
             return res.status(500).json({
                 message: "Database error"
             });
@@ -79,6 +83,7 @@ app.post("/books", (req, res) => {
     });
 
 });
+
 // Delete a book
 app.delete("/books/:id", (req, res) => {
 
@@ -109,7 +114,8 @@ app.delete("/books/:id", (req, res) => {
     });
 
 });
+
 // Start server
 app.listen(PORT, () => {
-    console.log(`Server is running at http://localhost:${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
